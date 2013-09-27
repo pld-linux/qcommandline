@@ -15,6 +15,7 @@ Patch103:	0003-new-SuppressHelp-flag.patch
 URL:		http://xf.iksaif.net/dev/qcommandline.html
 BuildRequires:	QtCore-devel
 BuildRequires:	cmake
+BuildRequires:	pkgconfig
 BuildRequires:	qt4-build
 BuildRequires:	qt4-qmake
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
