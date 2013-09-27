@@ -13,8 +13,10 @@ Patch0:		%{name}-fix-pkg-config-paths.patch
 Patch101:	0001-new-ParameterFence-flag.patch
 Patch102:	0002-new-NoShortName-flag-to-allow-options-with-no-short-.patch
 Patch103:	0003-new-SuppressHelp-flag.patch
+BuildRequires:	QtCore-devel
 BuildRequires:	cmake
-BuildRequires:	qt-devel
+BuildRequires:	qt4-build
+BuildRequires:	qt4-qmake
 
 %description
 QCommandLine is a command line parser for Qt programs (like getopt).
