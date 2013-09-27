@@ -1,0 +1,81 @@
+From 8b825f662058c0e32d08f37f7bbb2243dcded8b0 Mon Sep 17 00:00:00 2001
+From: Dan Callaghan <dcallagh@redhat.com>
+Date: Thu, 10 Jan 2013 10:17:19 +1000
+Subject: [PATCH 2/4] new NoShortName flag, to allow options with no short
+ name
+
+This patch is based on the following phantomjs commit:
+
+commit a5eb729c9d187a90f7be97f29f5bc5f9bcac39c7
+Author: Ariya Hidayat <ariya.hidayat@gmail.com>
+Date:   Sun Sep 2 00:22:34 2012 -0700
+
+    Modify QCommandLine to suit our needs better.
+
+    Allow null shortname for options.
+    Do not include params in the help text.
+
+    http://code.google.com/p/phantomjs/issues/detail?id=55
+---
+ src/qcommandline.cpp | 23 +++++++++++++++--------
+ src/qcommandline.h   |  1 +
+ 2 files changed, 16 insertions(+), 8 deletions(-)
+
+diff --git a/src/qcommandline.cpp b/src/qcommandline.cpp
+index c92a807..cb6e2ff 100644
+--- a/src/qcommandline.cpp
++++ b/src/qcommandline.cpp
+@@ -156,11 +156,13 @@ QCommandLine::parse()
+   bool allparam = false;
+ 
+   foreach (QCommandLineConfigEntry entry, d->config) {
+-    if (entry.type != QCommandLine::Param && entry.shortName == QLatin1Char('\0'))
++    if (entry.type != QCommandLine::Param && !(entry.flags & QCommandLine::NoShortName)
++        && entry.shortName == QLatin1Char('\0'))
+       qWarning() << QLatin1String("QCommandLine: Empty shortname detected");
+     if (entry.longName.isEmpty())
+-      qWarning() << QLatin1String("QCommandLine: Empty shortname detected");
+-    if (entry.type != QCommandLine::Param && conf.find(entry.shortName) != conf.end())
++      qWarning() << QLatin1String("QCommandLine: Empty longname detected");
++    if (entry.type != QCommandLine::Param && !(entry.flags & QCommandLine::NoShortName)
++        && conf.find(entry.shortName) != conf.end())
+       qWarning() << QLatin1String("QCommandLine: Duplicated shortname detected ") << entry.shortName;
+     if (conf.find(entry.longName) != conf.end())
+       qWarning() << QLatin1String("QCommandLine: Duplicated longname detected ") << entry.shortName;
+@@ -463,11 +465,16 @@ QCommandLine::help(bool logo)
+   foreach (QCommandLineConfigEntry entry, d->config) {
+     QString val;
+ 
+-    if (entry.type == QCommandLine::Option)
+-      val = QLatin1String("-") + QString(entry.shortName) +
+-	QLatin1String(",--") + entry.longName + QLatin1String("=<val>");
+-    if (entry.type == QCommandLine::Switch)
+-      val = QLatin1String("-") + QString(entry.shortName) + QLatin1String(",--") + entry.longName;
++    if (entry.type == QCommandLine::Option) {
++      if (entry.shortName != QLatin1Char('\0'))
++        val = QLatin1String("-") + QString(entry.shortName) + QLatin1Char(',');
++      val += QLatin1String("--") + entry.longName + QLatin1String("=<val>");
++    }
++    if (entry.type == QCommandLine::Switch) {
++      if (entry.shortName != QLatin1Char('\0'))
++        val = QLatin1String("-") + QString(entry.shortName) + QLatin1Char(',');
++      val += QLatin1String("--") + entry.longName;
++    }
+     if (entry.type == QCommandLine::Param)
+       val = entry.longName;
+ 
+diff --git a/src/qcommandline.h b/src/qcommandline.h
+index 2511127..4263f43 100644
+--- a/src/qcommandline.h
++++ b/src/qcommandline.h
+@@ -86,6 +86,7 @@ public:
+ 	MandatoryMultiple = Mandatory|Multiple,
+ 	OptionalMultiple = Optional|Multiple,
+         ParameterFence = 0x08, /**< all arguments after this point are considered parameters, not options. */
++        NoShortName = 0x10, /**< switch or option having only a long name, no short name */
+     } Flags;
+ 
+     /**
+-- 
+1.7.11.7
+

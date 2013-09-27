@@ -1,0 +1,51 @@
+From 014e03a28b400d383a95bd84ad59800f3edc44ae Mon Sep 17 00:00:00 2001
+From: Dan Callaghan <dcallagh@redhat.com>
+Date: Thu, 10 Jan 2013 10:20:06 +1000
+Subject: [PATCH 3/4] new SuppressHelp flag
+
+This patch is based on the following phantomjs commit:
+
+commit a5eb729c9d187a90f7be97f29f5bc5f9bcac39c7
+Author: Ariya Hidayat <ariya.hidayat@gmail.com>
+Date:   Sun Sep 2 00:22:34 2012 -0700
+
+    Modify QCommandLine to suit our needs better.
+
+    Allow null shortname for options.
+    Do not include params in the help text.
+
+    http://code.google.com/p/phantomjs/issues/detail?id=55
+---
+ src/qcommandline.cpp | 3 +++
+ src/qcommandline.h   | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/qcommandline.cpp b/src/qcommandline.cpp
+index cb6e2ff..0e28bc8 100644
+--- a/src/qcommandline.cpp
++++ b/src/qcommandline.cpp
+@@ -463,6 +463,9 @@ QCommandLine::help(bool logo)
+   int max = 0;
+ 
+   foreach (QCommandLineConfigEntry entry, d->config) {
++    if (entry.flags & QCommandLine::SuppressHelp)
++      continue;
++
+     QString val;
+ 
+     if (entry.type == QCommandLine::Option) {
+diff --git a/src/qcommandline.h b/src/qcommandline.h
+index 4263f43..017314c 100644
+--- a/src/qcommandline.h
++++ b/src/qcommandline.h
+@@ -87,6 +87,7 @@ public:
+ 	OptionalMultiple = Optional|Multiple,
+         ParameterFence = 0x08, /**< all arguments after this point are considered parameters, not options. */
+         NoShortName = 0x10, /**< switch or option having only a long name, no short name */
++        SuppressHelp = 0x20, /**< argument will be omitted from help message */
+     } Flags;
+ 
+     /**
+-- 
+1.7.11.7
+

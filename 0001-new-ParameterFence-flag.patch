@@ -1,0 +1,62 @@
+From 5a3e26fb4d2d3e90778d38e61854e193c9b26124 Mon Sep 17 00:00:00 2001
+From: Dan Callaghan <dcallagh@redhat.com>
+Date: Wed, 9 Jan 2013 19:40:22 +1000
+Subject: [PATCH 1/4] new ParameterFence flag
+
+This allows callers to define a parameter or option that causes every
+subsequent argument to be parsed as a parameter, even if it looks like
+an option.
+
+This patch is based on the following phantomjs commit:
+
+commit 23fe144a398239d25bf2a6624003274c3c3d6a50
+Author: Ryan Cumming <etaoins@gmail.com>
+Date:   Fri Sep 14 08:04:06 2012 -0700
+
+    Treat all args after the script name as script args
+
+    This fixes CapserJS which builds a command line like this:
+    phantomjs bin/bootstrap.js --casper-path=~/capserjs --cli
+
+    That works on Phantom 1.6 but not on master due to the qcommandline
+    port.
+
+    Fix by extending qcommandlne to take a ParameterFence flag which causes
+    it to treat any options after a parameter as arguments. Switch
+    "scriptname" to use that so the 1.6 behaviour is restored.
+
+    http://code.google.com/p/phantomjs/issues/detail?id=55
+---
+ src/qcommandline.cpp | 3 +++
+ src/qcommandline.h   | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/qcommandline.cpp b/src/qcommandline.cpp
+index bc28eff..c92a807 100644
+--- a/src/qcommandline.cpp
++++ b/src/qcommandline.cpp
+@@ -222,6 +222,9 @@ QCommandLine::parse()
+ 	entry.flags = (QCommandLine::Flags) (entry.flags | QCommandLine::Optional);
+       }
+ 
++      if (entry.flags & QCommandLine::ParameterFence)
++        allparam = true;
++
+       emit paramFound(entry.longName, arg);
+ 
+       if (!(entry.flags & QCommandLine::Multiple))
+diff --git a/src/qcommandline.h b/src/qcommandline.h
+index 6632d3c..2511127 100644
+--- a/src/qcommandline.h
++++ b/src/qcommandline.h
+@@ -85,6 +85,7 @@ public:
+ 	Multiple = 0x04, /**< argument can be used multiple time and will produce multiple signals. */
+ 	MandatoryMultiple = Mandatory|Multiple,
+ 	OptionalMultiple = Optional|Multiple,
++        ParameterFence = 0x08, /**< all arguments after this point are considered parameters, not options. */
+     } Flags;
+ 
+     /**
+-- 
+1.7.11.7
+

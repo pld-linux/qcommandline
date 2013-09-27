@@ -1,0 +1,32 @@
+From 8ea45650e589ad3db45e56d130841027542956df Mon Sep 17 00:00:00 2001
+From: Dan Callaghan <dcallagh@redhat.com>
+Date: Thu, 10 Jan 2013 10:45:27 +1000
+Subject: [PATCH 4/4] fix pkg-config paths
+
+---
+ QCommandLine.pc.in | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/QCommandLine.pc.in b/QCommandLine.pc.in
+index 56f7caa..c36bf55 100644
+--- a/QCommandLine.pc.in
++++ b/QCommandLine.pc.in
+@@ -1,11 +1,11 @@
+ prefix=@CMAKE_INSTALL_PREFIX@
+ exec_prefix=${prefix}
+-libdir=${prefix}/@LIB_INSTALL_DIR@
+-includedir=${prefix}/@INCLUDE_INSTALL_DIR@
++libdir=@LIB_INSTALL_DIR@
++includedir=@INCLUDE_INSTALL_DIR@
+ 
+ Name: QCommandLine
+ Description: QCommandLine is a qt-based library to parse command options
+ Version: @QCOMMANDLINE_LIB_MAJOR_VERSION@.@QCOMMANDLINE_LIB_MINOR_VERSION@.@QCOMMANDLINE_LIB_PATCH_VERSION@
+ Requires: QtCore
+ Libs: -L${libdir} -lqcommandline
+-Cflags: -I${includedir}
+\ No newline at end of file
++Cflags: -I${includedir}
+-- 
+1.7.11.7
+
