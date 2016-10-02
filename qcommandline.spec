@@ -16,7 +16,7 @@ Patch1:		0001-qt5.patch
 Patch101:	0001-new-ParameterFence-flag.patch
 Patch102:	0002-new-NoShortName-flag-to-allow-options-with-no-short-.patch
 Patch103:	0003-new-SuppressHelp-flag.patch
-URL:		http://xf.iksaif.net/dev/qcommandline.html
+URL:		https://github.com/iksaif/qcommandline
 %if %{with qt4}
 BuildRequires:	QtCore-devel
 BuildRequires:	qt4-build
