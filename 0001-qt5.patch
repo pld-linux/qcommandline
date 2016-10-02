@@ -1,0 +1,59 @@
+https://gitorious.org/qcommandline/qcommandline/merge_requests/3
+
+From fcdf5c29ac5a349fc7cce18f699075f262758ed9 Mon Sep 17 00:00:00 2001
+From: Dan Callaghan <djc@djc.id.au>
+Date: Sat, 1 Jun 2013 20:07:44 +1000
+Subject: [PATCH] qt5
+
+---
+ CMakeLists.txt     | 7 ++-----
+ src/CMakeLists.txt | 4 ++--
+ 2 files changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index bdec0bf..4c3588d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -42,8 +42,8 @@ if("${CMAKE_BUILD_TYPE}" MATCHES "^Rel.*")
+   add_definitions("-DQT_NO_DEBUG_OUTPUT")
+ endif("${CMAKE_BUILD_TYPE}" MATCHES "^Rel.*")
+ 
+-# Find Qt4
+-find_package( Qt4 REQUIRED )
++# Find Qt5
++find_package( Qt5Core REQUIRED )
+ 
+ set( QT_DONT_USE_QTGUI TRUE )
+ 
+@@ -72,9 +72,6 @@ if (NOT WIN32)
+ 	   COMPONENT devel)
+ endif (NOT WIN32)
+ 
+-# Include the cmake file needed to use qt4
+-include( ${QT_USE_FILE} )
+-
+ # Subdirs
+ add_subdirectory(src)
+ if (QCOMMANDLINE_BUILD_EXAMPLES)
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 8b66e36..6b0dc41 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -32,12 +32,12 @@ install(FILES
+ 
+ set(qcommandline_MOC_HDRS qcommandline.h)
+ 
+-qt4_wrap_cpp(qcommandline_MOC_SRCS ${qcommandline_MOC_HDRS})
++qt5_wrap_cpp(qcommandline_MOC_SRCS ${qcommandline_MOC_HDRS})
+ 
+ set (qcommandline_SRCS qcommandline.cpp)
+ 
+ add_library (qcommandline ${qcommandline_SRCS} ${qcommandline_MOC_SRCS})
+-target_link_libraries( qcommandline ${QT_LIBRARIES})
++qt5_use_modules(qcommandline Core)
+ 
+ if(BUILD_SHARED_LIBS)
+   set_target_properties(qcommandline PROPERTIES
+-- 
+1.8.1.4
+
